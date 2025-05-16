@@ -18,19 +18,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::apiResource('evenements', EvenementController::class);
-Route::apiResource('categories', CategorieController::class);
-Route::apiResource('emplacements', EmplacementController::class);
-
-// Routes personnalisées pour voir les paiements et les intérêts liés à un événement
-Route::get('evenements/{evenement}/paiements', [PaiementController::class, 'index']);
-Route::get('evenements/{evenement}/interets', [InteretController::class, 'index']);
-Route::get('evenements/{id}/clients', [EvenementController::class, 'clients']);
-Route::post('paiements', [PaiementController::class, 'store']);
 
 
-Route::post('interets', [InteretController::class, 'store']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
