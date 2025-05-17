@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\CategorieController;
-use App\Http\Controllers\EmplacementController;
-use App\Http\Controllers\EvenementController;
-use App\Http\Controllers\InteretController;
-use App\Http\Controllers\PaiementController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,13 +18,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('evenements', EvenementController::class);
-Route::resource('categories', CategorieController::class);
-Route::resource('emplacements', EmplacementController::class);
- // Routes personnalisées (web)
-Route::get('evenements/{evenement}/paiements', [PaiementController::class, 'index'])->name('evenements.paiements');
-Route::get('evenements/{evenement}/interets', [InteretController::class, 'index'])->name('evenements.interets');
-Route::get('evenements/{id}/clients', [EvenementController::class, 'clients'])->name('evenements.clients');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::post('paiements', [PaiementController::class, 'store'])->name('paiements.store');
-Route::post('interets', [InteretController::class, 'store'])->name('interets.store');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
