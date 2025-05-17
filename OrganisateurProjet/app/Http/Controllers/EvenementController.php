@@ -7,23 +7,18 @@ use Illuminate\Http\Request;
 
 class EvenementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    //recupere tous les evenment 
+    // Récupère tous les événements avec relations
     public function index()
     {
-        return Evenement::with(['categorie', 'emplacement'])->get();
-
+        return response()->json([
+            'evenements' => Evenement::with(['categorie', 'emplacement', 'user'])->get()
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    //creer un nouveau event 
+    // Crée un nouvel événement (API)
     public function store(Request $request)
     {
-       $validated = $request->validate([
+        $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'categorie_id' => 'required|exists:categories,id',
             'emplacement_id' => 'required|exists:emplacements,id',
@@ -33,26 +28,18 @@ class EvenementController extends Controller
         ]);
 
         $evenement = Evenement::create($validated);
-
-        return response()->json($evenement, 201);
+        return response()->json($evenement->load(['categorie', 'emplacement']), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Affiche un événement spécifique
+    public function show(Evenement $evenement)
     {
-               return Evenement::with(['categorie', 'emplacement'])->findOrFail($id);
-
+        return response()->json($evenement->load(['categorie', 'emplacement', 'user']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Met à jour un événement
+    public function update(Request $request, Evenement $evenement)
     {
-           $evenement = Evenement::findOrFail($id);
-
         $validated = $request->validate([
             'categorie_id' => 'sometimes|exists:categories,id',
             'emplacement_id' => 'sometimes|exists:emplacements,id',
@@ -62,25 +49,21 @@ class EvenementController extends Controller
         ]);
 
         $evenement->update($validated);
-
-        return response()->json($evenement);
+        return response()->json($evenement->fresh()->load(['categorie', 'emplacement']));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // Supprime un événement
+    public function destroy(Evenement $evenement)
     {
-         $evenement = Evenement::findOrFail($id);
         $evenement->delete();
-
-        return response()->json(['message' => 'Événement supprimé.']);
+        return response()->json(['message' => 'Événement supprimé.'], 204);
     }
-    public function clients($id)
-{
-    $evenement = \App\Models\Evenement::findOrFail($id);
 
-    return $evenement->clients; // Liste des utilisateurs ayant payé
-}
-
+    // Liste des clients (utilisateurs) pour un événement
+    public function clients(Evenement $evenement)
+    {
+        return response()->json([
+            'clients' => $evenement->clients()->with('user')->get()
+        ]);
+    }
 }

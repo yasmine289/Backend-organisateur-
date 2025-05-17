@@ -1,7 +1,14 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
-
+        <div>
+    <label for="role">Rôle</label>
+    <select name="role" id="role">
+        <option value="utilisateur">Utilisateur</option>
+        <option value="organisateur">Organisateur</option>
+        <!-- Admin ne peut pas s'inscrire, doit être créé manuellement -->
+    </select>
+</div>
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
