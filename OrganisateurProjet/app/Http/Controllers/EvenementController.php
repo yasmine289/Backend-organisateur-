@@ -9,11 +9,15 @@ class EvenementController extends Controller
 {
     // Récupère tous les événements avec relations
     public function index()
-    {
-        return response()->json([
-            'evenements' => Evenement::with(['categorie', 'emplacement', 'user'])->get()
-        ]);
-    }
+{
+    $evenements = Evenement::with(['categorie', 'emplacement', 'clients'])
+        ->where('date_evenement', '>=', now())
+        ->orderBy('date_evenement')
+        ->paginate(9);
+
+    return view('evenements.index', compact('evenements'));
+}
+
 
     // Crée un nouvel événement (API)
     public function store(Request $request)
@@ -33,9 +37,11 @@ class EvenementController extends Controller
 
     // Affiche un événement spécifique
     public function show(Evenement $evenement)
-    {
-        return response()->json($evenement->load(['categorie', 'emplacement', 'user']));
-    }
+{
+    $evenement->load(['clients.user']);
+    $evenement->load(['categorie', 'emplacement', 'clients.user']);
+    return view('evenements.show', compact('evenement'));
+}
 
     // Met à jour un événement
     public function update(Request $request, Evenement $evenement)

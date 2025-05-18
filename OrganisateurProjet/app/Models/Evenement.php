@@ -39,11 +39,16 @@ class Evenement extends Model
     return $this->hasManyThrough(
         \App\Models\User::class,
         \App\Models\Paiement::class,
-        'evenement_id',  
-        'id',            
-        'id',            
-        'user_id'        
+        'evenement_id',
+        'id',
+        'id',
+        'user_id'
     );
 }
 
+protected $dates = [
+    'date_evenement',
+    'created_at',
+    'updated_at'
+];
 }

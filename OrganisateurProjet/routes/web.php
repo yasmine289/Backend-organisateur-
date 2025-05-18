@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\OrganisateurController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -43,4 +45,11 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:utilisateur')->group(function () {
         Route::get('/utilisateur', [UserController::class, 'dashboard'])->name('user.dashboard');
     });
+
+       // Routes pour les événements
+    Route::get('/evenements', [EvenementController::class, 'index'])->name('evenements.index');
+    Route::get('/evenements/{evenement}', [EvenementController::class, 'show'])->name('evenements.show');
+
+    // Routes pour les catégories
+    Route::resource('categories', CategorieController::class);
 });

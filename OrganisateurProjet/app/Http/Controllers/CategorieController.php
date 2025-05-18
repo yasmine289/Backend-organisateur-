@@ -10,25 +10,30 @@ class CategorieController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return Categorie::all();
-
-    }
+   public function index()
+{
+    $categories = Categorie::withCount('evenements')->paginate(10);
+    return view('categories.index', ['categories' => $categories]);
+}
+public function create()
+{
+    return view('categories.create');
+}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255'
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'nom' => 'required|string|max:255|unique:categories'
+    ]);
 
-        $categorie = Categorie::create($validated);
+    Categorie::create($validated);
 
-        return response()->json($categorie, 201);
-    }
+    return redirect()->route('categories.index')
+                    ->with('success', 'Catégorie créée avec succès');
+}
 
     /**
      * Display the specified resource.
@@ -42,27 +47,37 @@ class CategorieController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-       $categorie = Categorie::findOrFail($id);
+    public function update(Request $request, $id)
+{
+    $categorie = Categorie::findOrFail($id);
 
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255'
-        ]);
+    $validated = $request->validate([
+        'nom' => 'required|string|max:255|unique:categories,nom,'.$categorie->id
+    ]);
 
-        $categorie->update($validated);
+    $categorie->update($validated);
 
-        return response()->json($categorie);
-    }
+    return redirect()->route('categories.index')
+                    ->with('success', 'Catégorie mise à jour');
+}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-     {
-        $categorie = Categorie::findOrFail($id);
-        $categorie->delete();
+    public function destroy($id)
+{
+    $categorie = Categorie::findOrFail($id);
+    $categorie->delete();
 
-        return response()->json(['message' => 'Catégorie supprimée.']);
-    }
+    // Redirection avec message flash (pas de réponse JSON)
+    return redirect()->route('categories.index')
+                    ->with('success', 'Catégorie supprimée avec succès');
+}
+
+
+public function edit($id)
+{
+    $categorie = Categorie::findOrFail($id);
+    return view('categories.edit', compact('categorie'));
+}
 }
