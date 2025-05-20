@@ -51,4 +51,10 @@ protected $dates = [
     'created_at',
     'updated_at'
 ];
+
+protected $casts = [
+    'date_evenement' => 'datetime', // ou 'date'
+];
+
+
 }

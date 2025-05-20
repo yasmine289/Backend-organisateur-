@@ -13,11 +13,11 @@ class CategorieController extends Controller
    public function index()
 {
     $categories = Categorie::withCount('evenements')->paginate(10);
-    return view('categories.index', ['categories' => $categories]);
+    return view('organisateur.categories.index', ['categories' => $categories]);
 }
 public function create()
 {
-    return view('categories.create');
+    return view('organisateur.categories.create');
 }
 
     /**
@@ -31,7 +31,7 @@ public function create()
 
     Categorie::create($validated);
 
-    return redirect()->route('categories.index')
+    return redirect()->route('organisateur.categories.index')
                     ->with('success', 'Catégorie créée avec succès');
 }
 
@@ -57,7 +57,7 @@ public function create()
 
     $categorie->update($validated);
 
-    return redirect()->route('categories.index')
+    return redirect()->route('organisateur.categories.index')
                     ->with('success', 'Catégorie mise à jour');
 }
 
@@ -70,7 +70,7 @@ public function create()
     $categorie->delete();
 
     // Redirection avec message flash (pas de réponse JSON)
-    return redirect()->route('categories.index')
+    return redirect()->route('organisateur.categories.index')
                     ->with('success', 'Catégorie supprimée avec succès');
 }
 
@@ -78,6 +78,6 @@ public function create()
 public function edit($id)
 {
     $categorie = Categorie::findOrFail($id);
-    return view('categories.edit', compact('categorie'));
+    return view('organisateur.categories.edit', compact('categorie'));
 }
 }

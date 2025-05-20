@@ -2,74 +2,163 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categorie;
+use App\Models\Emplacement;
 use App\Models\Evenement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EvenementController extends Controller
 {
-    // Récupère tous les événements avec relations
+    // ===== Méthodes pour l'organisateur =====
+
+    /**
+     * Affiche la liste des événements de l'organisateur
+     */
     public function index()
-{
-    $evenements = Evenement::with(['categorie', 'emplacement', 'clients'])
-        ->where('date_evenement', '>=', now())
-        ->orderBy('date_evenement')
-        ->paginate(9);
+    {
+        $evenements = Evenement::with(['emplacement'])
+                ->where('date_evenement', '>', now())
+                ->orderBy('date_evenement', 'asc')
+                ->get();
 
-    return view('evenements.index', compact('evenements'));
-}
+        return view('organisateur.evenements.index', compact('evenements'));
+    }
 
+    /**
+     * Affiche le formulaire de création
+     */
+    public function create()
+    {
+        return view('organisateur.evenements.create', [
+            'categories' => Categorie::all(),
+            'emplacements' => Emplacement::all()
+        ]);
+    }
 
-    // Crée un nouvel événement (API)
+    /**
+     * Enregistre un nouvel événement
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'titre' => 'required|string|max:255',
+            'date_evenement' => 'required|date|after:now',
             'categorie_id' => 'required|exists:categories,id',
             'emplacement_id' => 'required|exists:emplacements,id',
-            'titre' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'date_evenement' => 'required|date',
+            'description' => 'nullable|string'
         ]);
 
-        $evenement = Evenement::create($validated);
-        return response()->json($evenement->load(['categorie', 'emplacement']), 201);
+        Evenement::create([
+            'user_id' => auth()->id(),
+            'titre' => $validated['titre'],
+            'date_evenement' => $validated['date_evenement'],
+            'categorie_id' => $validated['categorie_id'],
+            'emplacement_id' => $validated['emplacement_id'],
+            'description' => $validated['description']
+        ]);
+
+        return redirect()->route('organisateur.evenements.index')
+                        ->with('success', 'Événement créé avec succès');
     }
 
-    // Affiche un événement spécifique
-    public function show(Evenement $evenement)
-{
-    $evenement->load(['clients.user']);
-    $evenement->load(['categorie', 'emplacement', 'clients.user']);
-    return view('evenements.show', compact('evenement'));
-}
-
-    // Met à jour un événement
-    public function update(Request $request, Evenement $evenement)
+    /**
+     * Affiche un événement spécifique
+     */
+    public function show(string $id)
     {
+        $evenement = Evenement::where('user_id', auth()->id())
+                     ->with(['categorie', 'emplacement', 'clients'])
+                     ->findOrFail($id);
+
+        return view('organisateur.evenements.show', compact('evenement'));
+    }
+
+    /**
+     * Affiche le formulaire d'édition
+     */
+    public function edit(string $id)
+    {
+        $evenement = Evenement::where('user_id', auth()->id())
+                     ->findOrFail($id);
+
+        return view('organisateur.evenements.edit', [
+            'evenement' => $evenement,
+            'categories' => Categorie::all(),
+            'emplacements' => Emplacement::all()
+        ]);
+    }
+
+    /**
+     * Met à jour un événement
+     */
+    public function update(Request $request, string $id)
+    {
+        $evenement = Evenement::where('user_id', auth()->id())
+                     ->findOrFail($id);
+
         $validated = $request->validate([
-            'categorie_id' => 'sometimes|exists:categories,id',
-            'emplacement_id' => 'sometimes|exists:emplacements,id',
-            'titre' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'date_evenement' => 'sometimes|date',
+            'titre' => 'required|string|max:255',
+            'date_evenement' => 'required|date|after:now',
+            'categorie_id' => 'required|exists:categories,id',
+            'emplacement_id' => 'required|exists:emplacements,id',
+            'description' => 'nullable|string'
         ]);
 
         $evenement->update($validated);
-        return response()->json($evenement->fresh()->load(['categorie', 'emplacement']));
+
+        return redirect()->route('organisateur.evenements.index')
+                        ->with('success', 'Événement mis à jour avec succès');
     }
 
-    // Supprime un événement
-    public function destroy(Evenement $evenement)
+    /**
+     * Supprime un événement
+     */
+    public function destroy(string $id)
     {
+        $evenement = Evenement::where('user_id', auth()->id())
+                     ->findOrFail($id);
         $evenement->delete();
-        return response()->json(['message' => 'Événement supprimé.'], 204);
+
+        return redirect()->route('organisateur.evenements.index')
+                        ->with('success', 'Événement supprimé avec succès');
     }
 
-    // Liste des clients (utilisateurs) pour un événement
-    public function clients(Evenement $evenement)
+    /**
+     * Liste des clients d'un événement
+     */
+    public function clients(string $id)
     {
-        return response()->json([
-            'clients' => $evenement->clients()->with('user')->get()
-        ]);
+        $evenement = Evenement::where('user_id', auth()->id())
+                     ->with('clients')
+                     ->findOrFail($id);
+
+        return view('organisateur.evenements.clients', compact('evenement'));
+    }
+
+    // ===== Méthodes pour l'utilisateur =====
+
+    /**
+     * Affiche la liste des événements pour l'utilisateur
+     */
+    public function userIndex()
+    {
+        $evenements = Evenement::where('date_evenement', '>', now())
+                     ->with(['categorie', 'emplacement'])
+                     ->orderBy('date_evenement', 'asc')
+                     ->paginate(12);
+
+        return view('utilisateur.evenement.index', compact('evenements'));
+    }
+
+    /**
+     * Affiche un événement pour l'utilisateur
+     */
+    public function userShow(string $id)
+    {
+        $evenement = Evenement::with(['categorie', 'emplacement'])
+                     ->findOrFail($id);
+
+        return view('utilisateur.evenement.show', compact('evenement'));
     }
 }

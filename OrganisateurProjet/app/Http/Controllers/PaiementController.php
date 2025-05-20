@@ -9,14 +9,15 @@ use Illuminate\Http\Request;
 class PaiementController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index($evenement)
+     * Display a listing of the resource.*/
+public function index()
 {
-    $evenement = Evenement::findOrFail($evenement);
-    return $evenement->paiements()->with('user')->get();
-}
+    $paiements = Paiement::with('user') // Chargement des relations
+                ->orderBy('created_at', 'desc')
+                ->paginate(10); // Utilisez paginate() au lieu de get()
 
+    return view('organisateur.paiements.index', compact('paiements'));
+}
     /**
      * Store a newly created resource in storage.
      */
