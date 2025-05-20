@@ -13,6 +13,7 @@ class CategorieController extends Controller
    public function index()
 {
     $categories = Categorie::withCount('evenements')->paginate(10);
+    
     return view('organisateur.categories.index', ['categories' => $categories]);
 }
 public function create()
