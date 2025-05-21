@@ -10,6 +10,7 @@ class CategorieController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         $categories = Categorie::withCount('evenements')->paginate(10);
@@ -24,6 +25,7 @@ class CategorieController extends Controller
     {
         return view('organisateur.categories.create');
     }
+
 
     /**
      * Store a newly created resource in storage.

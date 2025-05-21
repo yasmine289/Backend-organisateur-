@@ -98,7 +98,7 @@
                         @enderror
                     </div>
                     <div class="mb-3">
-    <label class="form-label">Prix du Ticket (€)</label>
+    <label class="form-label">Prix du Ticket (TND)</label>
     <input type="number" 
            name="prix_ticket" 
            class="form-control" 

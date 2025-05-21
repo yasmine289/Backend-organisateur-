@@ -8,6 +8,7 @@ use App\Models\Evenement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
 class EvenementController extends Controller
 {
     // ===== Méthodes pour l'organisateur =====
@@ -147,15 +148,31 @@ $evenement = Evenement::where('user_id', auth()->id())->findOrFail($id);
     /**
      * Affiche la liste des événements pour l'utilisateur
      */
-    public function userIndex()
-    {
-        $evenements = Evenement::where('date_evenement', '>', now())
-                     ->with(['categorie', 'emplacement'])
-                     ->orderBy('date_evenement', 'asc')
-                     ->paginate(12);
+    public function userIndex(Request $request)  // Add Request $request parameter here
+{
+    $query = Evenement::query()
+        ->with(['categorie', 'emplacement'])
+        ->where('date_evenement', '>', now());
 
-        return view('utilisateur.evenement.index', compact('evenements'));
+    if ($request->filled('search')) {
+        $query->where('titre', 'like', '%'.$request->search.'%');
     }
+
+    if ($request->filled('location')) {
+        $query->where('emplacement_id', $request->location);
+    }
+
+    if ($request->filled('category')) {
+        $query->where('categorie_id', $request->category);
+    }
+
+    $evenements = $query->orderBy('date_evenement', 'asc')->paginate(12);
+    $categories = Categorie::all();
+    $emplacements = Emplacement::all();  // Don't forget to add this for your location filter
+
+    return view('utilisateur.evenement.index', compact('evenements', 'categories', 'emplacements'));
+}
+
 
     /**
      * Affiche un événement pour l'utilisateur
