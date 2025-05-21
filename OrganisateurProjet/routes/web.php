@@ -1,5 +1,7 @@
 <?php
 
+
+
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\EmplacementController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,7 +60,16 @@ Route::middleware('auth')->group(function () {
         Route::resource('categories', CategorieController::class)->except(['show']);
         Route::resource('emplacements', EmplacementController::class)->except(['show']);
         Route::resource('paiements', PaiementController::class)->only(['index', 'destroy']);
+// routes/web.php
 
+     Route::prefix('organisateur')->name('organisateur.')->group(function() {
+     Route::resource('emplacements', EmplacementController::class);
+});
+Route::prefix('organisateur')->name('organisateur.')->group(function() {
+    Route::resource('emplacements', EmplacementController::class);
+});
+Route::get('/paiements', [PaiementController::class, 'index'])
+     ->name('paiements.index');
         // Routes imbriquées
         Route::prefix('evenements/{evenement}')->group(function () {
             Route::get('clients', [EvenementController::class, 'clients'])
@@ -82,3 +94,4 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
+

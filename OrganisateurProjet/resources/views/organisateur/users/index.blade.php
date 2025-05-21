@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <div class="card shadow">
     <div class="card-header bg-info text-white">
         <h3 class="mb-0">Liste des Utilisateurs</h3>
@@ -39,4 +37,4 @@
         </div>
     </div>
 </div>
-@endsection
+<x-app-layout>

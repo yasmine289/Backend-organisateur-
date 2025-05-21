@@ -4,3 +4,56 @@
 @import 'tailwindcss/utilities';
 
 
+/* app.css */
+@layer components {
+    /* Style des cartes */
+    .custom-card {
+        @apply rounded-xl shadow-lg overflow-hidden border border-gray-100;
+    }
+    
+    .card-header-warning {
+        @apply bg-amber-500 text-white px-6 py-4 flex items-center justify-between;
+    }
+
+    /* Tableau moderne */
+    .modern-table {
+        @apply w-full divide-y divide-gray-200;
+    }
+    
+    .modern-table thead {
+        @apply bg-amber-50;
+    }
+    
+    .modern-table th {
+        @apply px-4 py-3 text-left text-sm font-medium text-amber-900 uppercase tracking-wider;
+    }
+    
+    .modern-table td {
+        @apply px-4 py-3 whitespace-nowrap text-sm text-gray-700;
+    }
+
+    /* Badge */
+    .event-badge {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800;
+    }
+
+    /* Boutons actions */
+    .action-btn {
+        @apply p-2 rounded-lg transition-all duration-200 hover:scale-105;
+    }
+
+    /* Formulaire */
+    .form-input-custom {
+        @apply w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-amber-500 
+               focus:ring-2 focus:ring-amber-200 transition-all;
+    }
+
+    /* Alertes */
+    .custom-alert {
+        @apply p-4 rounded-lg border-l-4 flex items-center;
+    }
+    
+    .alert-success {
+        @apply bg-green-100 border-green-500 text-green-700;
+    }
+}

@@ -2,62 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Evenement;
 use App\Models\Paiement;
 use Illuminate\Http\Request;
 
 class PaiementController extends Controller
 {
-    /**
-     * Display a listing of the resource.*/
-public function index()
-{
-    $paiements = Paiement::with('user') // Chargement des relations
-                ->orderBy('created_at', 'desc')
-                ->paginate(10); // Utilisez paginate() au lieu de get()
-
-    return view('organisateur.paiements.index', compact('paiements'));
-}
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-{
-    $validated = $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'evenement_id' => 'required|exists:evenements,id',
-        'montant' => 'required|numeric',
-        'statut' => 'required|in:en attente,confirmé,échoué',
-        'methode' => 'nullable|string'
-    ]);
-
-    $paiement = Paiement::create($validated);
-
-    return response()->json($paiement, 201);
-}
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function index()
     {
-        //
-    }
+        $paiements = Paiement::with(['user', 'evenement'])
+            ->latest()
+            ->paginate(10);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('organisateur.paiements.index', compact('paiements'));
     }
 }

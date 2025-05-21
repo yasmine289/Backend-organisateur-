@@ -33,15 +33,7 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('organisateur.users.index') }}"
-                       class="quick-action-btn bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all">
-                        <div class="flex flex-col items-center">
-                            <div class="icon-box bg-blue-100 text-blue-600 rounded-full p-4 mb-3">
-                                <i class="fas fa-users-cog text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold">Administration Utilisateurs</h3>
-                        </div>
-                    </a>
+                    
                 </div>
             </div>
 

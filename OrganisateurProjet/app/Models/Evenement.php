@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Evenement extends Model
 {
      protected $fillable = [
-        'user_id', 'categorie_id', 'emplacement_id', 'titre', 'description', 'date_evenement'
+        'user_id', 'categorie_id', 'emplacement_id', 'titre', 'description', 'date_evenement', 'prix_ticket',
+    'nombre_tickets'
     ];
     public function organisateur()
     {

@@ -46,7 +46,9 @@ class EvenementController extends Controller
             'date_evenement' => 'required|date|after:now',
             'categorie_id' => 'required|exists:categories,id',
             'emplacement_id' => 'required|exists:emplacements,id',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'prix_ticket' => 'required|numeric|min:0',
+            'nombre_tickets' => 'required|integer|min:1'
         ]);
 
         Evenement::create([
@@ -55,7 +57,10 @@ class EvenementController extends Controller
             'date_evenement' => $validated['date_evenement'],
             'categorie_id' => $validated['categorie_id'],
             'emplacement_id' => $validated['emplacement_id'],
-            'description' => $validated['description']
+            'description' => $validated['description'],
+            'prix_ticket' => $validated['prix_ticket'],         
+            
+    'nombre_tickets' => $validated['nombre_tickets']
         ]);
 
         return redirect()->route('organisateur.evenements.index')
@@ -67,9 +72,8 @@ class EvenementController extends Controller
      */
     public function show(string $id)
     {
-        $evenement = Evenement::where('user_id', auth()->id())
-                     ->with(['categorie', 'emplacement', 'clients'])
-                     ->findOrFail($id);
+$evenement = Evenement::where('user_id', auth()->id())->findOrFail($id);
+
 
         return view('organisateur.evenements.show', compact('evenement'));
     }
@@ -102,7 +106,9 @@ class EvenementController extends Controller
             'date_evenement' => 'required|date|after:now',
             'categorie_id' => 'required|exists:categories,id',
             'emplacement_id' => 'required|exists:emplacements,id',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'prix_ticket' => 'required|numeric|min:0',
+            'nombre_tickets' => 'required|integer|min:1'
         ]);
 
         $evenement->update($validated);
