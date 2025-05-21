@@ -9,6 +9,7 @@ use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\OrganisateurController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -95,3 +96,15 @@ Route::get('/paiements', [PaiementController::class, 'index'])
     });
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/evenements/{evenement}/reservations/create', [ReservationController::class, 'create'])
+         ->name('utilisateur.reservations.create');
+    Route::post('/evenements/{evenement}/reservations', [ReservationController::class, 'store'])
+         ->name('utilisateur.reservations.store');
+});
+
+Route::get('/reservations/{reservation}/confirmation', [ReservationController::class, 'show'])
+    ->name('reservations.show');
+
+Route::post('/reservations/{reservation}/paiement', [ReservationController::class, 'processPayment'])
+    ->name('reservations.payment');

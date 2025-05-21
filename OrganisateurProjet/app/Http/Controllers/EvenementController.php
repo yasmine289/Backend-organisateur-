@@ -59,8 +59,8 @@ class EvenementController extends Controller
             'categorie_id' => $validated['categorie_id'],
             'emplacement_id' => $validated['emplacement_id'],
             'description' => $validated['description'],
-            'prix_ticket' => $validated['prix_ticket'],         
-            
+            'prix_ticket' => $validated['prix_ticket'],
+
     'nombre_tickets' => $validated['nombre_tickets']
         ]);
 
@@ -151,7 +151,9 @@ $evenement = Evenement::where('user_id', auth()->id())->findOrFail($id);
     public function userIndex(Request $request)  // Add Request $request parameter here
 {
     $query = Evenement::query()
-        ->with(['categorie', 'emplacement'])
+        ->with(['categorie', 'emplacement','reservations'])
+        ->withCount('reservations')
+        ->select('evenements.*', 'prix_ticket', 'nombre_tickets') 
         ->where('date_evenement', '>', now());
 
     if ($request->filled('search')) {

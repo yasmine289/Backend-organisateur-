@@ -56,6 +56,9 @@ protected $dates = [
 protected $casts = [
     'date_evenement' => 'datetime', // ou 'date'
 ];
-
+public function reservations()
+{
+    return $this->hasMany(Reservation::class);
+}
 
 }
