@@ -35,7 +35,7 @@
             <div class="md:w-2/3 p-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Réservation</h2>
 
-                <form method="POST" action="{{ route('utilisateur.reservations.store', $evenement) }}">
+                <form method="POST" action="{{ route('reservations.store', $evenement) }}">
                     @csrf
 
                     <div class="mb-6">

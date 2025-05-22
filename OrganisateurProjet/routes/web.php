@@ -96,15 +96,35 @@ Route::get('/paiements', [PaiementController::class, 'index'])
     });
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/evenements/{evenement}/reservations/create', [ReservationController::class, 'create'])
-         ->name('utilisateur.reservations.create');
-    Route::post('/evenements/{evenement}/reservations', [ReservationController::class, 'store'])
-         ->name('utilisateur.reservations.store');
+// ... (conservez les routes existantes au début du fichier)
+
+// ... (conservez le début du fichier existant)
+
+// Routes protégées
+Route::middleware('auth')->group(function () {
+    // ... (autres routes existantes)
+
+    // Routes de réservation
+    Route::prefix('reservations')->name('reservations.')->group(function () {
+        Route::get('/evenements/{evenement}/create', [ReservationController::class, 'create'])
+            ->name('create');
+        Route::post('/evenements/{evenement}/store', [ReservationController::class, 'store'])
+            ->name('store');
+        Route::get('/{reservation}', [ReservationController::class, 'show'])
+            ->name('show')
+            ->middleware('can:view,reservation');
+    });
+
+    // Routes de paiement
+    Route::prefix('paiements')->name('paiements.')->group(function () {
+        Route::get('/{reservation}/checkout', [PaiementController::class, 'checkout'])
+            ->name('checkout');
+        Route::post('/{reservation}/process', [PaiementController::class, 'process'])
+            ->name('process');
+        Route::get('/{reservation}/success', [PaiementController::class, 'success'])
+            ->name('success');
+        Route::get('/{reservation}/cancel', [PaiementController::class, 'cancel'])
+            ->name('cancel');
+    });
 });
 
-Route::get('/reservations/{reservation}/confirmation', [ReservationController::class, 'show'])
-    ->name('reservations.show');
-
-Route::post('/reservations/{reservation}/paiement', [ReservationController::class, 'processPayment'])
-    ->name('reservations.payment');

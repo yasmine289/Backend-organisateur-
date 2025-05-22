@@ -1,38 +1,33 @@
-@extends('layouts.app')
+<x-app-layout>
+<div class="container py-5">
+    <div class="alert alert-success">
+        <h2 class="mb-3"><i class="fas fa-check-circle"></i> Réservation confirmée</h2>
+        <p>Un email de confirmation a été envoyé à <strong>{{ $reservation->email }}</strong>.</p>
+    </div>
 
-@section('content')
-<div class="container">
-    <h1>Confirmation de réservation</h1>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <div class="card">
+    <div class="card shadow">
         <div class="card-body">
-            <h5 class="card-title">Réservation #{{ $reservation->id }}</h5>
-            <p class="card-text">
-                <strong>Événement:</strong> {{ $reservation->evenement->titre }}<br>
-                <strong>Date:</strong> {{ $reservation->evenement->date_evenement->format('d/m/Y H:i') }}<br>
-                <strong>Nom:</strong> {{ $reservation->nom }}<br>
-                <strong>Email:</strong> {{ $reservation->email }}<br>
-                <strong>Nombre de tickets:</strong> {{ $reservation->nombre_tickets }}<br>
-                <strong>Montant total:</strong> {{ number_format($reservation->montant_total, 2) }} €<br>
-                <strong>Statut:</strong>
-                <span class="badge bg-{{ $reservation->statut === 'payé' ? 'success' : 'warning' }}">
-                    {{ $reservation->statut }}
-                </span>
-            </p>
+            <h3 class="card-title">Détails de votre réservation</h3>
 
-            @if($reservation->statut === 'en_attente')
-                <form method="POST" action="{{ route('utilisateur.reservations.payment', $reservation) }}">
-                    @csrf
-                    <button type="submit" class="btn btn-success">Procéder au paiement</button>
-                </form>
-            @endif
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <p><strong>Événement:</strong> {{ $reservation->evenement->titre }}</p>
+                    <p><strong>Date:</strong> {{ $reservation->evenement->date_evenement->format('d/m/Y H:i') }}</p>
+                    <p><strong>Lieu:</strong> {{ $reservation->evenement->emplacement->nom }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Référence:</strong> {{ $reservation->reference }}</p>
+                    <p><strong>Nombre de tickets:</strong> {{ $reservation->nombre_tickets }}</p>
+                    <p><strong>Montant total:</strong> {{ number_format($reservation->montant_total, 2) }} €</p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ route('evenements.show', $reservation->evenement) }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Retour à l'événement
+                </a>
+            </div>
         </div>
     </div>
 </div>
-@endsection
+</x-app-layout>

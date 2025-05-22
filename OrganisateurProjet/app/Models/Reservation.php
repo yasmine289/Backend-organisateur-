@@ -9,13 +9,37 @@ class Reservation extends Model
 {
     use HasFactory;
 
-    public function evenement()
-{
-    return $this->belongsTo(Evenement::class);
-}
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'evenement_id',
+        'user_id',
+        'nom',
+        'email',
+        'nombre_tickets',
+        'montant_total',
+        'statut',
+        'reference',
+        'reference_paiement',
+        'date_paiement'
+    ];
 
-public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    /**
+     * Relation avec l'événement
+     */
+    public function evenement()
+    {
+        return $this->belongsTo(Evenement::class);
+    }
+
+    /**
+     * Relation avec l'utilisateur
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

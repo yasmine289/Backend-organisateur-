@@ -140,7 +140,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('utilisateur.reservations.create', $evenement) }}"
+                            <a href="{{ route('reservations.create', $evenement) }}"
    class="w-full py-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-900 font-bold rounded-xl shadow-lg transition-all hover:shadow-amber-300/50 hover:scale-[1.02] flex items-center justify-center">
     <i class="fas fa-ticket-alt mr-3 animate-bounce"></i>
     S'inscrire maintenant
